@@ -34,6 +34,10 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 
+	void BeginWalking();
+
+	void StopWalking();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -52,5 +56,8 @@ public:
 
 	UPROPERTY(EditAnyWhere, Category = Input)
 	class UInputAction* IA_Look;
+
+	UPROPERTY(EditAnyWhere, Category = Input)
+	class UInputAction* IA_Walk;
 
 };

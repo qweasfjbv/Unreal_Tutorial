@@ -78,6 +78,9 @@ void AMyThirdPersonChar::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedPlayerInputComponent->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AMyThirdPersonChar::StopJumping);
 		EnhancedPlayerInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AMyThirdPersonChar::Look);
 
+		EnhancedPlayerInputComponent->BindAction(IA_Walk, ETriggerEvent::Started, this, &AMyThirdPersonChar::BeginWalking);
+		EnhancedPlayerInputComponent->BindAction(IA_Walk, ETriggerEvent::Completed, this, &AMyThirdPersonChar::StopWalking);
+
 	}
 
 }
@@ -109,3 +112,18 @@ void AMyThirdPersonChar::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(InputValue.Y);
 	}
 }
+
+void AMyThirdPersonChar::BeginWalking() {
+
+	UCharacterMovementComponent* CharMove = GetCharacterMovement();
+	CharMove->MaxWalkSpeed *= 0.4f;
+
+}
+
+void AMyThirdPersonChar::StopWalking() {
+
+	UCharacterMovementComponent* CharMove = GetCharacterMovement();
+	CharMove->MaxWalkSpeed *= 2.5f;
+
+}
+
