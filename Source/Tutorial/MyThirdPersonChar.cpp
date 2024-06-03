@@ -11,8 +11,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Pawn.h"
-
-// Sets default values
+ // Sets default values
 AMyThirdPersonChar::AMyThirdPersonChar()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
