@@ -27,4 +27,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void LookAtActor(AActor* TargetActor);
+	bool CanSeeActor(const AActor* TargetActor) const;
 };
