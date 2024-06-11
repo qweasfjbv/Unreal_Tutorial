@@ -13,6 +13,8 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SightSource = CreateDefaultSubobject<USceneComponent>(TEXT("SightSource"));
+	SightSource->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -44,11 +46,11 @@ bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor)const {
 	}
 
 	FHitResult Hit;
-	FVector Start = GetActorLocation();
+	FVector Start = SightSource->GetComponentLocation();
 	FVector End = TargetActor->GetActorLocation();
 
 	// Channel needed to use Trace
-	ECollisionChannel Channel = ECollisionChannel::ECC_Visibility;
+	ECollisionChannel Channel = ECollisionChannel::ECC_GameTraceChannel1;
 
 	// Add Ignored Actor
 	// cuz linetrace start from center
@@ -62,7 +64,17 @@ bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor)const {
 	// DEBUG
 	DrawDebugLine(GetWorld(), Start, End, FColor::Red);
 
+
+	
+
+	// SweepTrace
+	FQuat Rotation = FQuat::Identity;
+	FCollisionShape Shape = FCollisionShape::MakeBox(FVector(20.f, 20.f, 20.f));
+
+	//GetWorld()->SweepSingleByChannel(Hit, Start, End, Rotation, Channel, Shape);
+
 	return !Hit.bBlockingHit;
+
 }
 
 void AEnemyCharacter::LookAtActor(AActor* TargetActor) {
