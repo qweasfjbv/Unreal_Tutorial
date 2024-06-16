@@ -20,6 +20,9 @@ ADodgeballProjectile::ADodgeballProjectile()
 
 	// Generally, Collision Component should be Root Component
 	RootComponent = SphereComponent;
+
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
+	ProjectileMovement->InitialSpeed = 1500.f;
 }
 
 // Called when the game starts or when spawned
