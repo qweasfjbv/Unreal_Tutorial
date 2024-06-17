@@ -30,7 +30,23 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-	LookAtActor(PlayerCharacter);
+	bCanSeePlayer = LookAtActor(PlayerCharacter);
+
+	if (bCanSeePlayer != bPreviousCanSeePlayer) {
+		if (bCanSeePlayer){	// start to throw dodgeball
+			GetWorldTimerManager().SetTimer(ThrowTimerHandle,
+				this,
+				&AEnemyCharacter::ThrowDodgeball, ThrowingInterval,
+				true,
+				ThrowingDelay);
+		}
+		else {		// stop throwing dodgeball
+			GetWorldTimerManager().ClearTimer(ThrowTimerHandle);
+		}
+	}
+
+	bPreviousCanSeePlayer = bCanSeePlayer;
+
 }
 
 // Called to bind functionality to input
@@ -77,8 +93,8 @@ bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor)const {
 
 }
 
-void AEnemyCharacter::LookAtActor(AActor* TargetActor) {
-	if (TargetActor == nullptr) return;
+bool AEnemyCharacter::LookAtActor(AActor* TargetActor) {
+	if (TargetActor == nullptr) return false;
 
 	if (CanSeeActor(TargetActor)) {
 		FVector Start = GetActorLocation();
@@ -86,5 +102,19 @@ void AEnemyCharacter::LookAtActor(AActor* TargetActor) {
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
 
 		SetActorRotation(LookAtRotation);
+		return true;
 	}
+
+	return false;
+}
+
+void AEnemyCharacter::ThrowDodgeball() {
+	if (DodgeballClass == nullptr) return;
+
+	FVector ForwardVector = GetActorForwardVector();
+	float SpawnDistance = 40.f;
+
+	FVector SpawnLocation = GetActorLocation() + (ForwardVector * SpawnDistance);
+
+	GetWorld()->SpawnActor<ADodgeballProjectile>(DodgeballClass, SpawnLocation, GetActorRotation());
 }
