@@ -34,4 +34,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// FORCEINLINE : Must implement in header file
+	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const {
+		return ProjectileMovement;
+	}
+
 };

@@ -116,5 +116,12 @@ void AEnemyCharacter::ThrowDodgeball() {
 
 	FVector SpawnLocation = GetActorLocation() + (ForwardVector * SpawnDistance);
 
-	GetWorld()->SpawnActor<ADodgeballProjectile>(DodgeballClass, SpawnLocation, GetActorRotation());
+	FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+	
+	ADodgeballProjectile* Projectile = GetWorld()->SpawnActorDeferred<ADodgeballProjectile>(DodgeballClass, SpawnTransform);
+	ProjectileMovement = Projectile->GetProjectileMovement();
+	ProjectileMovement->InitialSpeed = 2200.f;
+	Projectile->FinishSpawning(SpawnTransform);
+
+	//GetWorld()->SpawnActor<ADodgeballProjectile>(DodgeballClass, SpawnLocation, GetActorRotation());
 }

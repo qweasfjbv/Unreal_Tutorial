@@ -16,6 +16,8 @@ class TUTORIAL_API AEnemyCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=LookAt, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* SightSource;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Dodgeball, meta = (AllowPrivateAccess = "true"))
+	class UProjectileMovementComponent* ProjectileMovement;
 public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
