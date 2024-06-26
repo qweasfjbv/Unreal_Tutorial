@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "HealthComponent.h"
+#include "HealthInterface.h"
 #include "TutorialCharacter.generated.h"
 
 class USpringArmComponent;
@@ -16,7 +18,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class ATutorialCharacter : public ACharacter
+class ATutorialCharacter : public ACharacter, public IHealthInterface
 {
 	GENERATED_BODY()
 
@@ -44,6 +46,9 @@ class ATutorialCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	class UHealthComponent* HealthComponent;
+
+
 public:
 	ATutorialCharacter();
 	
@@ -69,5 +74,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	virtual void OnDeath_Implementation() override;
 };
 

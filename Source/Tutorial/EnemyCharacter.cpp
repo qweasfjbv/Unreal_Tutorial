@@ -5,7 +5,7 @@
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "DrawDebugHelpers.h"
+#include "DodgeballFunctionLibrary.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -56,47 +56,16 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
-bool AEnemyCharacter::CanSeeActor(const AActor* TargetActor)const {
-	if (TargetActor == nullptr) {
-		return false;
-	}
-
-	FHitResult Hit;
-	FVector Start = SightSource->GetComponentLocation();
-	FVector End = TargetActor->GetActorLocation();
-
-	// Channel needed to use Trace
-	ECollisionChannel Channel = ECollisionChannel::ECC_GameTraceChannel1;
-
-	// Add Ignored Actor
-	// cuz linetrace start from center
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-	QueryParams.AddIgnoredActor(TargetActor);
-
-	
-	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, Channel, QueryParams);
-
-	// DEBUG
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red);
-
-
-	
-
-	// SweepTrace
-	FQuat Rotation = FQuat::Identity;
-	FCollisionShape Shape = FCollisionShape::MakeBox(FVector(20.f, 20.f, 20.f));
-
-	//GetWorld()->SweepSingleByChannel(Hit, Start, End, Rotation, Channel, Shape);
-
-	return !Hit.bBlockingHit;
-
-}
-
 bool AEnemyCharacter::LookAtActor(AActor* TargetActor) {
 	if (TargetActor == nullptr) return false;
 
-	if (CanSeeActor(TargetActor)) {
+	const TArray<const AActor*> IgnoreActors = { this, TargetActor };
+
+	if (UDodgeballFunctionLibrary::CanSeeActor(GetWorld(),
+		SightSource->GetComponentLocation(),
+		TargetActor,
+		IgnoreActors)) {
+
 		FVector Start = GetActorLocation();
 		FVector End = TargetActor->GetActorLocation();
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
