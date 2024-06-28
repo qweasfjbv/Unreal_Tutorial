@@ -3,9 +3,7 @@
 
 #include "EnemyCharacter.h"
 #include "Engine/World.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "DodgeballFunctionLibrary.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -13,14 +11,17 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SightSource = CreateDefaultSubobject<USceneComponent>(TEXT("SightSource"));
-	SightSource->SetupAttachment(RootComponent);
+	LookAtActorComponent = CreateDefaultSubobject<ULookAtActorComponent>(TEXT("LookAtActorComponent"));
+	LookAtActorComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
+	LookAtActorComponent->SetTarget(PlayerCharacter);
 	
 }
 
@@ -29,8 +30,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-	bCanSeePlayer = LookAtActor(PlayerCharacter);
+	bCanSeePlayer = LookAtActorComponent->CanSeeActor();
 
 	if (bCanSeePlayer != bPreviousCanSeePlayer) {
 		if (bCanSeePlayer){	// start to throw dodgeball
@@ -56,26 +56,6 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
-bool AEnemyCharacter::LookAtActor(AActor* TargetActor) {
-	if (TargetActor == nullptr) return false;
-
-	const TArray<const AActor*> IgnoreActors = { this, TargetActor };
-
-	if (UDodgeballFunctionLibrary::CanSeeActor(GetWorld(),
-		SightSource->GetComponentLocation(),
-		TargetActor,
-		IgnoreActors)) {
-
-		FVector Start = GetActorLocation();
-		FVector End = TargetActor->GetActorLocation();
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, End);
-
-		SetActorRotation(LookAtRotation);
-		return true;
-	}
-
-	return false;
-}
 
 void AEnemyCharacter::ThrowDodgeball() {
 	if (DodgeballClass == nullptr) return;

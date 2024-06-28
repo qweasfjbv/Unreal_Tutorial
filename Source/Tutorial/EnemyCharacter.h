@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "TimerManager.h"
 #include "DodgeballProjectile.h"
+#include "LookAtActorComponent.h"
 #include "EnemyCharacter.generated.h"
 
 UCLASS()
@@ -14,7 +15,7 @@ class TUTORIAL_API AEnemyCharacter : public ACharacter
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=LookAt, meta = (AllowPrivateAccess = "true"))
-	USceneComponent* SightSource;
+	class ULookAtActorComponent* LookAtActorComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Dodgeball, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
@@ -35,8 +36,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	bool LookAtActor(AActor* TargetActor);
 
 	
 protected:
